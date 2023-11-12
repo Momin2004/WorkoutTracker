@@ -1,4 +1,4 @@
-package nl.avans.workouttracker
+package workouttracker
 
 import org.junit.Test
 

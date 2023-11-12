@@ -1,4 +1,4 @@
-package nl.avans.workouttracker.ui.theme
+package com.example.workouttracker.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
