@@ -1,4 +1,4 @@
-package com.example.workouttracker.ui.screens
+package com.example.workouttracker.ui.screens.exercise
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold

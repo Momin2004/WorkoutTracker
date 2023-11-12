@@ -21,7 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.workouttracker.ui.screens.ExerciseScreen
+import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.R

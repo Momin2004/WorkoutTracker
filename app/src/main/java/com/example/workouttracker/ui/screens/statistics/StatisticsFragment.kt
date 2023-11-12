@@ -6,7 +6,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.workouttracker.ui.screens.ExerciseContent
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
