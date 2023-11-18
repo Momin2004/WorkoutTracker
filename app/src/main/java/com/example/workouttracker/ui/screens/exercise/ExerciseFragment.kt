@@ -51,7 +51,7 @@ fun ExerciseContent(controller : NavController) {
         LazyColumn {
             items(filteredExercises) { exercise ->
                 ExerciseItem(exercise) {
-                    controller.navigate("exerciseD/$exercise")
+                    controller.navigate("exercise/$exercise")
                 }
             }
         }
@@ -75,22 +75,3 @@ fun ExerciseItem(exercise: String, onClick: () -> Unit) {
     }
 }
 
-@Composable
-fun ExerciseDetailScreen(exerciseName: String?) {
-    var title = exerciseName;
-    if(title == null) title = "";
-
-    WorkoutTrackerTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(text = title, style = MaterialTheme.typography.h6)
-                    }
-                )
-            }
-        ) {
-
-        }
-    }
-}

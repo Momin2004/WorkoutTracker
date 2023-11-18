@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
                     composable("exercise/{exerciseName}") { backStackEntry ->
-                        ExerciseDetailScreen(backStackEntry.arguments?.getString("exerciseName"))
+                        ExerciseDetailScreen(backStackEntry.arguments?.getString("exerciseName"), navController)
                     }
                 }
             }
@@ -78,14 +78,12 @@ fun BottomNavigationBar(navController: NavController) {
     }
 }
 
-// Helper function to find the current route
 @Composable
 fun currentRoute(navController: NavController): String? {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     return navBackStackEntry?.destination?.route
 }
 
-// Define your screens as a sealed class
 sealed class Screen(val route: String, val resourceId: Int, val icon: ImageVector) {
     object Workout : Screen("workout", R.string.workout, Icons.Default.Home)
     object Exercises : Screen("exercises", R.string.exercises, Icons.Default.List)
