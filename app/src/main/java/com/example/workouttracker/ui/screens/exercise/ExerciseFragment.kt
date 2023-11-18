@@ -10,15 +10,26 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.workouttracker.data.Exercise
+import com.example.workouttracker.data.WorkoutDatabase
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun ExerciseScreen(controller : NavController) {
-    val exercises = remember { mutableStateListOf("Deadlift", "Squat", "Bench") }
+//    val exercises = remember { mutableStateListOf("Deadlift", "Squat", "Bench") }
     var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val database = WorkoutDatabase.getDatabase(context)
+    val workoutDao = database.workoutDao()
+    val exercises = workoutDao.getAllExercises().observeAsState(listOf()).value
     WorkoutTrackerTheme {
         Scaffold(
             topBar = {
@@ -42,7 +53,7 @@ fun ExerciseScreen(controller : NavController) {
             ExerciseContent(controller, exercises)
             if (showDialog) {
                 AddExerciseDialog(onAdd = { exerciseName ->
-                    exercises.add(exerciseName)
+                    CoroutineScope(Dispatchers.IO).launch { workoutDao.insertExercise(Exercise(name = exerciseName)) }
                     showDialog = false
                 }, onDismiss = {
                     showDialog = false
@@ -53,9 +64,11 @@ fun ExerciseScreen(controller : NavController) {
 }
 
 @Composable
-fun ExerciseContent(controller : NavController, exercises: List<String>) {
+fun ExerciseContent(controller : NavController, exercises: List<Exercise>) {
     var searchQuery by remember { mutableStateOf("") }
-    val filteredExercises = exercises.filter { it.contains(searchQuery, ignoreCase = true) }
+    val filteredExercises = exercises.filter {
+        it.name.contains(searchQuery, ignoreCase = true)
+    }
 
     Column {
         // Search bar
@@ -72,7 +85,7 @@ fun ExerciseContent(controller : NavController, exercises: List<String>) {
         LazyColumn {
             items(filteredExercises) { exercise ->
                 ExerciseItem(exercise) {
-                    controller.navigate("exercise/$exercise")
+                    controller.navigate("exercise/${exercise.id}")
                 }
             }
         }
@@ -80,7 +93,7 @@ fun ExerciseContent(controller : NavController, exercises: List<String>) {
 }
 
 @Composable
-fun ExerciseItem(exercise: String, onClick: () -> Unit) {
+fun ExerciseItem(exercise: Exercise, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -91,7 +104,7 @@ fun ExerciseItem(exercise: String, onClick: () -> Unit) {
         Column(
             modifier = Modifier.padding(16.dp)
         ) {
-            Text(text = exercise, style = MaterialTheme.typography.h6)
+            Text(text = exercise.name, style = MaterialTheme.typography.h6)
         }
     }
 }
