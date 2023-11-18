@@ -1,9 +1,6 @@
 package com.example.workouttracker.ui.screens.statistics
 
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
