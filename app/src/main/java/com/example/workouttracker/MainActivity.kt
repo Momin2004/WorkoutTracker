@@ -25,6 +25,7 @@ import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.R
+import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
 
 
@@ -38,8 +39,11 @@ class MainActivity : ComponentActivity() {
             ) {
                 NavHost(navController = navController, startDestination = "workout") {
                     composable("workout") { WorkoutScreen() }
-                    composable("exercises") { ExerciseScreen() }
+                    composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
+                    composable("exercise/{exerciseName}") { backStackEntry ->
+                        ExerciseDetailScreen(backStackEntry.arguments?.getString("exerciseName"))
+                    }
                 }
             }
         }
