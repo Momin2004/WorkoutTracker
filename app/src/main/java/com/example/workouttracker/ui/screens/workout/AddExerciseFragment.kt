@@ -14,10 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.workouttracker.data.Exercise
-import com.example.workouttracker.data.Workout
 import com.example.workouttracker.data.WorkoutDao
-import com.example.workouttracker.data.WorkoutViewModel
 import com.example.workouttracker.ui.screens.exercise.ExerciseItem
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 

@@ -23,11 +23,11 @@ import androidx.navigation.navArgument
 import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.data.WorkoutDatabase
-import com.example.workouttracker.data.WorkoutViewModel
 import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
 import com.example.workouttracker.ui.screens.workout.AddExerciseScreen
 import com.example.workouttracker.ui.screens.workout.CreateWorkoutScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
+import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -37,7 +37,6 @@ class MainActivity : ComponentActivity() {
             val db = WorkoutDatabase.getDatabase(this)
             val workoutDao = db.workoutDao()
 
-            // Get an instance of WorkoutViewModel
             val workoutViewModel: WorkoutViewModel = viewModel()
 
             val navController = rememberNavController()

@@ -7,8 +7,8 @@ import java.util.*
 @Entity(tableName = "exercise_sets")
 data class ExerciseSet(
     @PrimaryKey(autoGenerate = true) val setId: Int = 0,
-    val weight: Double,
-    val reps: Int,
+    var weight: Double,
+    var reps: Int,
     val attemptId: Int // Foreign key to reference ExerciseAttempt
 )
 

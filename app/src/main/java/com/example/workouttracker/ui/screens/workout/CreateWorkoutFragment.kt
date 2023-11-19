@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.workouttracker.data.WorkoutViewModel
+import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import kotlin.math.log
 
