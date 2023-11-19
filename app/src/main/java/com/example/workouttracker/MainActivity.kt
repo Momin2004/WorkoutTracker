@@ -1,10 +1,8 @@
 package com.example.workouttracker
 
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -12,10 +10,8 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -25,12 +21,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
-import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
-import com.example.workouttracker.R
-import com.example.workouttracker.data.WorkoutDao
 import com.example.workouttracker.data.WorkoutDatabase
 import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
-import com.example.workouttracker.ui.screens.workout.WorkoutDetailScreen
+import com.example.workouttracker.ui.screens.workout.AddExerciseScreen
+import com.example.workouttracker.ui.screens.workout.CreateWorkoutScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
 
 
@@ -48,7 +42,8 @@ class MainActivity : ComponentActivity() {
             ) {
                 NavHost(navController = navController, startDestination = "workout") {
                     composable("workout") { WorkoutScreen(navController) }
-                    composable("workoutDetail") { WorkoutDetailScreen(navController) }
+                    composable("workout/create") { CreateWorkoutScreen(navController) }
+                    composable("workout/create/add") { AddExerciseScreen(navController, workoutDao) }
                     composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
                     composable(

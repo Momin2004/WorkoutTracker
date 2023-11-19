@@ -21,7 +21,7 @@ import com.example.workouttracker.Screen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
-fun WorkoutScreen(navController: NavController) {
+fun WorkoutScreen(controller: NavController) {
     WorkoutTrackerTheme {
         Scaffold(
             topBar = {
@@ -32,19 +32,19 @@ fun WorkoutScreen(navController: NavController) {
                 )
             }
         ) {
-            WorkoutContent(navController)
+            WorkoutContent(controller)
         }
     }
 }
 
 @Composable
-fun WorkoutContent(navController: NavController) {
+fun WorkoutContent(controller: NavController) {
     Box(
         modifier = Modifier.fillMaxSize().padding(bottom = 100.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
         Button(
-            onClick = { navController.navigate("workoutDetail") }
+            onClick = { controller.navigate("workout/create") }
         ) {
             Text("Start workout")
         }

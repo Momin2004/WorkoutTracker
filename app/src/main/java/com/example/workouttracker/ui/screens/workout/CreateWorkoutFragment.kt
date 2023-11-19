@@ -6,24 +6,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
-
 @Composable
-fun WorkoutDetailScreen(navController : NavController) {
+fun CreateWorkoutScreen(controller : NavController) {
     WorkoutTrackerTheme {
         Scaffold(
             topBar = {
@@ -34,13 +27,13 @@ fun WorkoutDetailScreen(navController : NavController) {
                 )
             }
         ) {
-            WorkoutDetailContent(navController)
+            CreateWorkoutContent(controller)
         }
     }
 }
 
 @Composable
-fun WorkoutDetailContent(navController: NavController) {
+fun CreateWorkoutContent(controller: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -49,7 +42,7 @@ fun WorkoutDetailContent(navController: NavController) {
             modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 100.dp),
         ) {
             Button(
-                onClick = { /*TODO*/ }
+                onClick = { controller.navigate("workout/create/add") }
             ) {
                 Text("Add Exercise")
             }
@@ -57,7 +50,7 @@ fun WorkoutDetailContent(navController: NavController) {
             Spacer(modifier = Modifier.width(30.dp))
 
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = { controller.popBackStack() },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
             ) {
                 Text("End Workout")
