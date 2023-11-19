@@ -30,4 +30,12 @@ interface WorkoutDao {
 
     @Query("SELECT * FROM exercise")
     fun getAllExercises(): LiveData<List<Exercise>>
+
+    @Transaction
+    @Query("SELECT * FROM exercise_attempts WHERE exerciseId = :exerciseId")
+    fun getAttemptsForExercise(exerciseId: Int): LiveData<List<ExerciseAttemptWithSets>>
+
+    @Query("SELECT * FROM exercise WHERE id = :exerciseId")
+    fun getExerciseById(exerciseId: Int): LiveData<Exercise>
+
 }

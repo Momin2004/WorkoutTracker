@@ -17,14 +17,18 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.R
+import com.example.workouttracker.data.WorkoutDao
+import com.example.workouttracker.data.WorkoutDatabase
 import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutDetailScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
@@ -34,6 +38,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val db = WorkoutDatabase.getDatabase(this);
+            val workoutDao = db.workoutDao();
+
+
             val navController = rememberNavController()
             Scaffold(
                 bottomBar = { BottomNavigationBar(navController) }
@@ -43,8 +51,12 @@ class MainActivity : ComponentActivity() {
                     composable("workoutDetail") { WorkoutDetailScreen(navController) }
                     composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
-                    composable("exercise/{exerciseName}") { backStackEntry ->
-                        ExerciseDetailScreen(backStackEntry.arguments?.getString("exerciseName"), navController)
+                    composable(
+                        "exercise/{exerciseId}",
+                        arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })
+                        ){ backStackEntry ->
+                        val exerciseId = backStackEntry.arguments?.getInt("exerciseId")
+                        ExerciseDetailScreen(exerciseId, navController, workoutDao)
                     }
                 }
             }
