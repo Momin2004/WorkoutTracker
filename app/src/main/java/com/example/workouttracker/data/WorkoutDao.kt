@@ -38,4 +38,6 @@ interface WorkoutDao {
     @Query("SELECT * FROM exercise WHERE id = :exerciseId")
     fun getExerciseById(exerciseId: Int): LiveData<Exercise>
 
+    @Query("SELECT exerciseId FROM exercise_attempts WHERE attemptId = :attemptId")
+    suspend fun getExerciseIdByAttemptId(attemptId: Int): Int?
 }
