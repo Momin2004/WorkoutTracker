@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,6 +23,7 @@ import androidx.navigation.navArgument
 import com.example.workouttracker.ui.screens.exercise.ExerciseScreen
 import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.data.WorkoutDatabase
+import com.example.workouttracker.data.WorkoutViewModel
 import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
 import com.example.workouttracker.ui.screens.workout.AddExerciseScreen
 import com.example.workouttracker.ui.screens.workout.CreateWorkoutScreen
@@ -32,13 +34,15 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val db = WorkoutDatabase.getDatabase(this);
-            val workoutDao = db.workoutDao();
+            val db = WorkoutDatabase.getDatabase(this)
+            val workoutDao = db.workoutDao()
 
+            // Get an instance of WorkoutViewModel
+            val workoutViewModel: WorkoutViewModel = viewModel()
 
             val navController = rememberNavController()
             Scaffold(
-                bottomBar = { BottomNavigationBar(navController) }
+                bottomBar = { BottomNavigationBar(navController, workoutViewModel) }
             ) {
                 NavHost(navController = navController, startDestination = "workout") {
                     composable("workout") { WorkoutScreen(navController) }
@@ -49,7 +53,7 @@ class MainActivity : ComponentActivity() {
                     composable(
                         "exercise/{exerciseId}",
                         arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })
-                        ){ backStackEntry ->
+                    ){ backStackEntry ->
                         val exerciseId = backStackEntry.arguments?.getInt("exerciseId")
                         ExerciseDetailScreen(exerciseId, navController, workoutDao)
                     }
@@ -59,8 +63,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, workoutViewModel: WorkoutViewModel) {
     val items = listOf(
         Screen.Workout,
         Screen.Exercises,
@@ -76,7 +81,12 @@ fun BottomNavigationBar(navController: NavController) {
                 selected = currentRoute == screen.route,
                 onClick = {
                     if (currentRoute != screen.route) {
-                        navController.navigate(screen.route) {
+                        val route = if (screen is Screen.Workout && workoutViewModel.isWorkoutActive.value) {
+                            "workout/create"
+                        } else {
+                            screen.route
+                        }
+                        navController.navigate(route) {
                             popUpTo(navController.graph.startDestinationId)
                             launchSingleTop = true
                         }

@@ -24,12 +24,16 @@ import kotlin.math.log
 
 @Composable
 fun CreateWorkoutScreen(controller : NavController) {
+    val workoutViewModel: WorkoutViewModel = viewModel(LocalContext.current as ComponentActivity)
     WorkoutTrackerTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
                     title = {
                         Text(text = "Workout", style = MaterialTheme.typography.h6)
+                    },
+                    actions = {
+                        Text(text = workoutViewModel.timerState.value)
                     }
                 )
             }
@@ -38,6 +42,7 @@ fun CreateWorkoutScreen(controller : NavController) {
         }
     }
 }
+
 
 @Composable
 fun CreateWorkoutContent(controller: NavController) {
@@ -49,7 +54,6 @@ fun CreateWorkoutContent(controller: NavController) {
             Text(exercise.name)
         }
     }
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
@@ -66,7 +70,10 @@ fun CreateWorkoutContent(controller: NavController) {
             Spacer(modifier = Modifier.width(30.dp))
 
             Button(
-                onClick = { controller.popBackStack() },
+                onClick = {
+                    controller.popBackStack()
+                    workoutViewModel.stopTimer()
+               },
                 colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
             ) {
                 Text("End Workout")
