@@ -26,6 +26,7 @@ import com.example.workouttracker.ui.screens.statistics.StatisticScreen
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import com.example.workouttracker.R
 import com.example.workouttracker.ui.screens.exercise.ExerciseDetailScreen
+import com.example.workouttracker.ui.screens.workout.WorkoutDetailScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
 
 
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
                 bottomBar = { BottomNavigationBar(navController) }
             ) {
                 NavHost(navController = navController, startDestination = "workout") {
-                    composable("workout") { WorkoutScreen() }
+                    composable("workout") { WorkoutScreen(navController) }
+                    composable("workoutDetail") { WorkoutDetailScreen(navController) }
                     composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
                     composable("exercise/{exerciseName}") { backStackEntry ->
@@ -88,17 +90,4 @@ sealed class Screen(val route: String, val resourceId: Int, val icon: ImageVecto
     object Workout : Screen("workout", R.string.workout, Icons.Default.Home)
     object Exercises : Screen("exercises", R.string.exercises, Icons.Default.List)
     object Statistics : Screen("statistics", R.string.statistics, Icons.Default.Star)
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    WorkoutTrackerTheme {
-        Greeting("Android")
-    }
 }
