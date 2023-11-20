@@ -12,7 +12,7 @@ fun StatisticScreen() {
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = "Statistic", style = MaterialTheme.typography.h6)
+                        Text(text = "Statistics", style = MaterialTheme.typography.h6)
                     }
                 )
             }
