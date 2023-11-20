@@ -3,9 +3,14 @@ package com.example.workouttracker.ui.screens.workout
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.workouttracker.data.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.sql.Date
 import java.util.Timer
@@ -65,33 +70,31 @@ class WorkoutViewModel : ViewModel() {
         }
     }
 
-    var timerState = mutableStateOf("00:00")
-        private set
-
+    var seconds = 0
+    var timerState = mutableStateOf("")
     var isWorkoutActive = mutableStateOf(false)
-        private set
 
-    private var seconds = 0
-    private var timer: Timer? = null
+    private var timerJob: Job? = null
+
     fun startTimer() {
         isWorkoutActive.value = true
-        timer?.cancel()
-        timer = Timer()
-        timer?.schedule(object : TimerTask() {
-            override fun run() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch(Dispatchers.Main) {
+            while (isActive) {
                 seconds++
                 val hours = seconds / 3600
                 val minutes = (seconds % 3600) / 60
                 val secs = seconds % 60
                 timerState.value = String.format("%02d:%02d:%02d", hours, minutes, secs)
+                delay(1000)
             }
-        }, 0, 1000)
+        }
     }
 
     fun stopTimer() {
         isWorkoutActive.value = false
-        timer?.cancel()
-        timer = null
+        timerJob?.cancel()
+        timerJob = null
         seconds = 0
         timerState.value = "00:00"
     }
