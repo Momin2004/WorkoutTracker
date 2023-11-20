@@ -27,7 +27,7 @@ class WorkoutViewModel : ViewModel() {
             exerciseId = exercise.id
         )
         newExerciseAttempts.add(newAttempt)
-        exerciseSets[attemptId] = mutableListOf(ExerciseSet(setId = 0, weight = 0.0, reps = 0, attemptId = attemptId))
+        // exerciseSets[attemptId] = mutableListOf(ExerciseSet(setId = 0, weight = 0.0, reps = 0, attemptId = attemptId))
     }
 
     fun addSetToAttempt(attemptId: Int) {
@@ -43,6 +43,13 @@ class WorkoutViewModel : ViewModel() {
     }
 
     fun onSetDetailsUpdated(attemptId: Int) {
+        val sets = exerciseSets[attemptId]
+        if (sets != null && sets.last().isFilled()) {
+            addSetToAttempt(attemptId)
+        }
+    }
+
+    fun addSetIfLastSetIsFilled(attemptId: Int) {
         val sets = exerciseSets[attemptId]
         if (sets != null && sets.last().isFilled()) {
             addSetToAttempt(attemptId)

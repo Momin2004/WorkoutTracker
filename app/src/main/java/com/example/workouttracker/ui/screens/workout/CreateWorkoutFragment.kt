@@ -17,6 +17,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +30,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.workouttracker.data.Exercise
 import com.example.workouttracker.data.ExerciseSet
 import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import androidx.compose.ui.focus.FocusRequester
 import kotlin.math.log
 
 @Composable
@@ -100,10 +103,10 @@ fun CreateWorkoutContent(controller: NavController) {
                             workoutViewModel.addSetToAttempt(exercise.id)
                         } else {
                             sets.forEachIndexed { index, set ->
-                                SetInputRow(setDetails = set) { weight, reps ->
+                                SetInputRow(setDetails = set, onSetChanged = { weight, reps ->
                                     workoutViewModel.updateSet(exercise.id, set.setId, weight, reps)
                                     workoutViewModel.onSetDetailsUpdated(exercise.id)
-                                }
+                                }, workoutViewModel = workoutViewModel, exercise = exercise)
                             }
                         }
                     }
@@ -113,58 +116,42 @@ fun CreateWorkoutContent(controller: NavController) {
     }
 }
 
-
-//@Composable
-//fun ExerciseSetCard(attemptId: Int, sets: MutableList<ExerciseSet>, workoutViewModel: WorkoutViewModel) {
-//    Card(modifier = Modifier.padding(8.dp)) {
-//        Column(modifier = Modifier.padding(16.dp)) {
-//            sets.forEach { set ->
-//                SetInputRow(set) { updatedSet ->
-//                    workoutViewModel.updateSet(
-//                        attemptId,
-//                        updatedSet.setId,
-//                        updatedSet.weight,
-//                        updatedSet.reps
-//                    )
-//                }
-//            }
-//            Button(onClick = { workoutViewModel.addSetToAttempt(attemptId) }) {
-//                Text("Add Set")
-//            }
-//        }
-//    }
-//}
-
 @Composable
-fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit) {
-    println("test")
+fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, workoutViewModel: WorkoutViewModel, exercise: Exercise) {
     var weight by remember { mutableStateOf(setDetails.weight.toString()) }
-    var reps by remember { mutableStateOf(setDetails.reps.toString()) }
+    var reps by remember { mutableStateOf(setDetails.reps) }
 
-    Row(modifier = Modifier.padding(8.dp)) {
-        OutlinedTextField(
-            value = weight,
-            onValueChange = {
-                weight = it
-                onSetChanged(it.toDoubleOrNull() ?: 0.0, setDetails.reps)
-            },
-            label = { Text("Weight (kg)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.weight(1f)
-        )
+    Column {
+        Row(modifier = Modifier.padding(8.dp)) {
+            OutlinedTextField(
+                value = weight,
+                onValueChange = {
+                    weight = it
+                    onSetChanged(it.toDoubleOrNull() ?: 0.0, reps)
+                },
+                label = { Text("Weight (kg)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f)
+            )
 
-        Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.dp))
 
-        OutlinedTextField(
-            value = reps,
-            onValueChange = {
-                reps = it
-                onSetChanged(setDetails.weight, it.toIntOrNull() ?: 0)
-            },
-            label = { Text("Reps") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.weight(1f)
-        )
+            OutlinedTextField(
+                value = reps.toString(),
+                onValueChange = {
+                    reps = it.toIntOrNull() ?: 0
+                    onSetChanged(weight.toDoubleOrNull() ?: 0.0, reps)
+                    if (reps > 0) {
+                        workoutViewModel.addSetIfLastSetIsFilled(exercise.id)
+                    }
+                },
+                label = { Text("Reps") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
+
+
 
