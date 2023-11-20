@@ -45,7 +45,7 @@ fun ExerciseScreen(controller : NavController) {
                     onClick = { showDialog = true },
                     modifier = Modifier.padding(bottom = 56.dp)
                 ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Exercise")
+                    Icon(Icons.Filled.Add, contentDescription = "Create Exercise")
                 }
             },
 

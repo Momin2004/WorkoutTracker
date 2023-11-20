@@ -1,17 +1,21 @@
 package com.example.workouttracker.ui.screens.workout
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,10 +42,26 @@ fun CreateWorkoutScreen(controller : NavController) {
             topBar = {
                 TopAppBar(
                     title = {
-                        Text(text = "Workout", style = MaterialTheme.typography.h6)
-                    },
-                    actions = {
-                        Text(text = workoutViewModel.timerState.value)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Workout", style = MaterialTheme.typography.h6)
+                            Text(text = workoutViewModel.timerState.value)
+                            Button(
+                                onClick = {
+                                    controller.popBackStack()
+                                    workoutViewModel.stopTimer()
+                                    // workoutViewModel.saveWorkout {
+                                    //     controller.navigate("destination_after_saving")
+                                    // }
+                                },
+                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                            ) {
+                                Text("End Workout")
+                            }
+                        }
                     }
                 )
             }
@@ -52,26 +72,38 @@ fun CreateWorkoutScreen(controller : NavController) {
 }
 
 
+
 @Composable
 fun CreateWorkoutContent(controller: NavController) {
     val workoutViewModel: WorkoutViewModel = viewModel(LocalContext.current as ComponentActivity)
     val currentExercises = workoutViewModel.currentWorkoutExercises
     val exerciseSets = workoutViewModel.exerciseSets
 
-    LazyColumn {
-        items(currentExercises) { exercise ->
-            Card(modifier = Modifier.padding(8.dp)) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(exercise.name, style = MaterialTheme.typography.h6)
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { controller.navigate("workout/create/add") },
+                modifier = Modifier.padding(bottom = 56.dp)
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Exercise")
+            }
+        }
+    ) {
+        LazyColumn {
+            items(currentExercises) { exercise ->
+                Card(modifier = Modifier.padding(8.dp)) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(exercise.name, style = MaterialTheme.typography.h6)
 
-                    val sets = exerciseSets[exercise.id] ?: mutableListOf()
-                    if (sets.isEmpty()) {
-                        workoutViewModel.addSetToAttempt(exercise.id)
-                    } else {
-                        sets.forEachIndexed { index, set ->
-                            SetInputRow(setDetails = set) { weight, reps ->
-                                workoutViewModel.updateSet(exercise.id, set.setId, weight, reps)
-                                workoutViewModel.onSetDetailsUpdated(exercise.id)
+                        val sets = exerciseSets[exercise.id] ?: mutableListOf()
+                        if (sets.isEmpty()) {
+                            workoutViewModel.addSetToAttempt(exercise.id)
+                        } else {
+                            sets.forEachIndexed { index, set ->
+                                SetInputRow(setDetails = set) { weight, reps ->
+                                    workoutViewModel.updateSet(exercise.id, set.setId, weight, reps)
+                                    workoutViewModel.onSetDetailsUpdated(exercise.id)
+                                }
                             }
                         }
                     }
@@ -79,37 +111,8 @@ fun CreateWorkoutContent(controller: NavController) {
             }
         }
     }
-
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 100.dp),
-        ) {
-            Button(
-                onClick = { controller.navigate("workout/create/add") }
-            ) {
-                Text("Add Exercise")
-            }
-
-            Spacer(modifier = Modifier.width(30.dp))
-
-            Button(
-                onClick = {
-                    controller.popBackStack()
-//                    workoutViewModel.saveWorkout {
-//                        controller.navigate("destination_after_saving")
-//                    }
-                },
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
-            ) {
-                Text("End Workout")
-            }
-        }
-    }
 }
+
 
 //@Composable
 //fun ExerciseSetCard(attemptId: Int, sets: MutableList<ExerciseSet>, workoutViewModel: WorkoutViewModel) {

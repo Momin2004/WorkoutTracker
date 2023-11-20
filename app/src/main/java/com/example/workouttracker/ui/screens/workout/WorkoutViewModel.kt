@@ -81,11 +81,6 @@ class WorkoutViewModel : ViewModel() {
         }, 0, 1000)
     }
 
-
-    fun getTimerState(): String {
-        return timerState.value
-    }
-
     fun stopTimer() {
         isWorkoutActive.value = false
         timer?.cancel()
