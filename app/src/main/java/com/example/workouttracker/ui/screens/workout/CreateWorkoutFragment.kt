@@ -1,5 +1,6 @@
 package com.example.workouttracker.ui.screens.workout
 
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,45 +36,40 @@ import com.example.workouttracker.data.ExerciseSet
 import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import androidx.compose.ui.focus.FocusRequester
+import java.util.Random
 import kotlin.math.log
 
 @Composable
 fun CreateWorkoutScreen(controller : NavController) {
     val workoutViewModel: WorkoutViewModel = viewModel(LocalContext.current as ComponentActivity)
-    WorkoutTrackerTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Workout", style = MaterialTheme.typography.h6)
-                            Text(text = workoutViewModel.timerState.value)
-                            Button(
-                                onClick = {
-                                    controller.popBackStack()
-                                    workoutViewModel.stopTimer()
-                                    // workoutViewModel.saveWorkout {
-                                    //     controller.navigate("destination_after_saving")
-                                    // }
-                                },
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
-                            ) {
-                                Text("End Workout")
-                            }
-                        }
+    Column {
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Workout", style = MaterialTheme.typography.h6)
+                    Text(text = workoutViewModel.timerState.value)
+                    Button(
+                        onClick = {
+                            controller.popBackStack()
+                            workoutViewModel.stopTimer()
+                            // workoutViewModel.saveWorkout {
+                            //     controller.navigate("destination_after_saving")
+                            // }
+                        },
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+                    ) {
+                        Text("End Workout")
                     }
-                )
+                }
             }
-        ) {
-            CreateWorkoutContent(controller)
-        }
+        )
+        CreateWorkoutContent(controller)
     }
 }
-
 
 
 @Composable
@@ -98,7 +94,7 @@ fun CreateWorkoutContent(controller: NavController) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(exercise.name, style = MaterialTheme.typography.h6)
 
-                        val sets = exerciseSets[exercise.id] ?: mutableListOf()
+                        val sets = exerciseSets.filter { it.attemptId == exercise.id }
                         if (sets.isEmpty()) {
                             workoutViewModel.addSetToAttempt(exercise.id)
                         } else {
@@ -120,6 +116,8 @@ fun CreateWorkoutContent(controller: NavController) {
 fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, workoutViewModel: WorkoutViewModel, exercise: Exercise) {
     var weight by remember { mutableStateOf(setDetails.weight.toString()) }
     var reps by remember { mutableStateOf(setDetails.reps) }
+    var isNewSetAdded by remember { mutableStateOf(false) }
+    var previousReps by remember { mutableStateOf(0) } // Add this line
 
     Column {
         Row(modifier = Modifier.padding(8.dp)) {
@@ -139,11 +137,16 @@ fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, wo
             OutlinedTextField(
                 value = reps.toString(),
                 onValueChange = {
-                    reps = it.toIntOrNull() ?: 0
-                    onSetChanged(weight.toDoubleOrNull() ?: 0.0, reps)
-                    if (reps > 0) {
-                        workoutViewModel.addSetIfLastSetIsFilled(exercise.id)
+                    val newReps = it.toIntOrNull() ?: 0
+                    onSetChanged(weight.toDoubleOrNull() ?: 0.0, newReps)
+
+                    if (previousReps == 0 && newReps in 1..9 && !isNewSetAdded) {
+                        workoutViewModel.addSetToAttempt(exercise.id)
+                        isNewSetAdded = true
                     }
+
+                    previousReps = newReps // Add this line
+                    reps = newReps
                 },
                 label = { Text("Reps") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

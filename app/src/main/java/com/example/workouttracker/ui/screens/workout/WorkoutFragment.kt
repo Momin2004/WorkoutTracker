@@ -26,7 +26,6 @@ import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 @Composable
 fun WorkoutScreen(controller: NavController) {
-    WorkoutTrackerTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -39,7 +38,7 @@ fun WorkoutScreen(controller: NavController) {
             WorkoutContent(controller)
         }
     }
-}
+
 
 @Composable
 fun WorkoutContent(controller: NavController) {

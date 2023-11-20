@@ -19,7 +19,7 @@ import java.util.TimerTask
 class WorkoutViewModel : ViewModel() {
     private var newWorkout = Workout(workoutId = 0, date = Date(0))
     private var newExerciseAttempts = mutableStateListOf<ExerciseAttempt>()
-    var exerciseSets = mutableStateMapOf<Int, MutableList<ExerciseSet>>()
+    var exerciseSets = mutableStateListOf<ExerciseSet>()
     var currentWorkoutExercises = mutableStateListOf<Exercise>()
 
     fun addExerciseToWorkout(exercise: Exercise) {
@@ -36,27 +36,18 @@ class WorkoutViewModel : ViewModel() {
     }
 
     fun addSetToAttempt(attemptId: Int) {
-        val sets = exerciseSets.getOrPut(attemptId) { mutableListOf() }
-        sets.add(ExerciseSet(setId = sets.size, weight = 0.0, reps = 0, attemptId = attemptId))
+        exerciseSets.add(ExerciseSet(setId = exerciseSets.size, weight = 0.0, reps = 0, attemptId = attemptId))
     }
 
     fun updateSet(attemptId: Int, setId: Int, weight: Double, reps: Int) {
-        exerciseSets[attemptId]?.find { it.setId == setId }?.apply {
+        exerciseSets.find { it.setId == setId && it.attemptId == attemptId }?.apply {
             this.weight = weight
             this.reps = reps
         }
     }
-
     fun onSetDetailsUpdated(attemptId: Int) {
-        val sets = exerciseSets[attemptId]
-        if (sets != null && sets.last().isFilled()) {
-            addSetToAttempt(attemptId)
-        }
-    }
-
-    fun addSetIfLastSetIsFilled(attemptId: Int) {
-        val sets = exerciseSets[attemptId]
-        if (sets != null && sets.last().isFilled()) {
+        val sets = exerciseSets.filter { it.attemptId == attemptId }
+        if (sets.isNotEmpty() && sets.last().isFilled()) {
             addSetToAttempt(attemptId)
         }
     }

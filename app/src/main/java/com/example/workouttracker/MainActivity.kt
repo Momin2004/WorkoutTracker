@@ -28,12 +28,15 @@ import com.example.workouttracker.ui.screens.workout.AddExerciseScreen
 import com.example.workouttracker.ui.screens.workout.CreateWorkoutScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutScreen
 import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
+import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            WorkoutTrackerTheme {
+
             val db = WorkoutDatabase.getDatabase(this)
             val workoutDao = db.workoutDao()
 
@@ -46,16 +49,22 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = "workout") {
                     composable("workout") { WorkoutScreen(navController) }
                     composable("workout/create") { CreateWorkoutScreen(navController) }
-                    composable("workout/create/add") { AddExerciseScreen(navController, workoutDao) }
+                    composable("workout/create/add") {
+                        AddExerciseScreen(
+                            navController,
+                            workoutDao
+                        )
+                    }
                     composable("exercises") { ExerciseScreen(navController) }
                     composable("statistics") { StatisticScreen() }
                     composable(
                         "exercise/{exerciseId}",
                         arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })
-                    ){ backStackEntry ->
+                    ) { backStackEntry ->
                         val exerciseId = backStackEntry.arguments?.getInt("exerciseId")
                         ExerciseDetailScreen(exerciseId, navController, workoutDao)
                     }
+                }
                 }
             }
         }
