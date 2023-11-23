@@ -66,20 +66,26 @@ class WorkoutViewModel : ViewModel() {
     var isWorkoutActive = mutableStateOf(false)
 
     private var timerJob: Job? = null
+    private var startTime = 0L
 
     fun startTimer() {
         isWorkoutActive.value = true
+
         timerJob?.cancel()
         timerJob = viewModelScope.launch(Dispatchers.Main) {
             while (isActive) {
-                seconds++
-                val hours = seconds / 3600
-                val minutes = (seconds % 3600) / 60
-                val secs = seconds % 60
+                val elapsedTime = System.currentTimeMillis() - startTime
+                val hours = elapsedTime / 3600000
+                val minutes = (elapsedTime % 3600000) / 60000
+                val secs = (elapsedTime % 60000) / 1000
                 timerState.value = String.format("%02d:%02d:%02d", hours, minutes, secs)
                 delay(1000)
             }
         }
+    }
+    fun iniTimer() {
+        startTime = System.currentTimeMillis()
+        startTimer()
     }
 
     fun stopTimer() {
@@ -97,7 +103,7 @@ class WorkoutViewModel : ViewModel() {
     fun startWorkout() {
         currentWorkoutExercises.clear()
         exerciseSets.clear()
-        startTimer()
+        iniTimer()
     }
 }
 

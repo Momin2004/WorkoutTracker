@@ -46,7 +46,10 @@ fun CreateWorkoutScreen(controller : NavController) {
 
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = {
+                showDialog = false
+                workoutViewModel.startTimer()
+            },
             title = { Text("End Workout") },
             text = { Text("Are you sure you want to end the workout?") },
             confirmButton = {
@@ -62,7 +65,10 @@ fun CreateWorkoutScreen(controller : NavController) {
                 }
             },
             dismissButton = {
-                Button(onClick = { showDialog = false }) {
+                Button(onClick = {
+                    showDialog = false
+                    workoutViewModel.startTimer()
+                }) {
                     Text("No")
                 }
             }
