@@ -89,5 +89,15 @@ class WorkoutViewModel : ViewModel() {
         seconds = 0
         timerState.value = "00:00"
     }
+
+    fun pauseTimer() {
+        timerJob?.cancel()
+        timerJob = null
+    }
+    fun startWorkout() {
+        currentWorkoutExercises.clear()
+        exerciseSets.clear()
+        startTimer()
+    }
 }
 

@@ -51,7 +51,7 @@ fun WorkoutContent(controller: NavController) {
         Button(
             onClick = {
                 controller.navigate("workout/create")
-                workoutViewModel.startTimer()
+                workoutViewModel.startWorkout()
             }
         ) {
             Text("Start workout")

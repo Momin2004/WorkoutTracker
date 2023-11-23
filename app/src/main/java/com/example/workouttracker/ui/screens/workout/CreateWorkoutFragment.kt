@@ -42,6 +42,33 @@ import kotlin.math.log
 @Composable
 fun CreateWorkoutScreen(controller : NavController) {
     val workoutViewModel: WorkoutViewModel = viewModel(LocalContext.current as ComponentActivity)
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("End Workout") },
+            text = { Text("Are you sure you want to end the workout?") },
+            confirmButton = {
+                Button(onClick = {
+                    showDialog = false
+                    controller.popBackStack()
+                    workoutViewModel.stopTimer()
+                    // workoutViewModel.saveWorkout {
+                    //     controller.navigate("destination_after_saving")
+                    // }
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("No")
+                }
+            }
+        )
+    }
+
     Column {
         TopAppBar(
             title = {
@@ -54,11 +81,8 @@ fun CreateWorkoutScreen(controller : NavController) {
                     Text(text = workoutViewModel.timerState.value)
                     Button(
                         onClick = {
-                            controller.popBackStack()
-                            workoutViewModel.stopTimer()
-                            // workoutViewModel.saveWorkout {
-                            //     controller.navigate("destination_after_saving")
-                            // }
+                            showDialog = true
+                            workoutViewModel.pauseTimer()
                         },
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
                     ) {
@@ -70,7 +94,6 @@ fun CreateWorkoutScreen(controller : NavController) {
         CreateWorkoutContent(controller)
     }
 }
-
 
 @Composable
 fun CreateWorkoutContent(controller: NavController) {
@@ -144,8 +167,7 @@ fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, wo
                         workoutViewModel.addSetToAttempt(exercise.id)
                         isNewSetAdded = true
                     }
-
-                    previousReps = newReps // Add this line
+                    previousReps = newReps
                     reps = newReps
                 },
                 label = { Text("Reps") },
