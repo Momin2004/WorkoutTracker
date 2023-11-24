@@ -29,4 +29,5 @@ data class Exercise(
 data class Workout(
     @PrimaryKey(autoGenerate = true) val workoutId: Int = 0,
     val date: Date
+//    val workoutTime: Long
 )

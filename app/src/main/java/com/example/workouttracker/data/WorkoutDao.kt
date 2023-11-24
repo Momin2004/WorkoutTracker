@@ -1,5 +1,6 @@
 package com.example.workouttracker.data
 
+import android.provider.SyncStateContract.Helpers.insert
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -10,7 +11,6 @@ import androidx.room.Transaction
 interface WorkoutDao {
     @Insert
     suspend fun insertWorkout(workout: Workout): Long
-
     @Insert
     suspend fun insertExerciseAttempt(attempt: ExerciseAttempt): Long
 
@@ -41,3 +41,4 @@ interface WorkoutDao {
     @Query("SELECT exerciseId FROM exercise_attempts WHERE attemptId = :attemptId")
     suspend fun getExerciseIdByAttemptId(attemptId: Int): Int?
 }
+

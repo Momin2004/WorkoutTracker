@@ -2,6 +2,7 @@ package com.example.workouttracker.ui.screens.workout
 
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,9 @@ import com.example.workouttracker.data.ExerciseSet
 import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
 import androidx.compose.ui.focus.FocusRequester
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Random
 import kotlin.math.log
 
@@ -106,11 +110,22 @@ fun CreateWorkoutContent(controller: NavController) {
     val workoutViewModel: WorkoutViewModel = viewModel(LocalContext.current as ComponentActivity)
     val currentExercises = workoutViewModel.currentWorkoutExercises
     val exerciseSets = workoutViewModel.exerciseSets
+//    val workoutID = workoutViewModel.currentWorkoutID.value
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { controller.navigate("workout/create/add") },
+                onClick = {
+//                    Yessir program do the breaky breaky :( :( ur the pro dev guy so pls fix <3
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        val exerciseID = workoutViewModel.selectedExercise.value?.id
+//                        if (exerciseID != null) {
+//                            workoutViewModel.insertNewAttempt(workoutID, exerciseID)
+//                        }
+//                    }
+
+                    controller.navigate("workout/create/add")
+                },
                 modifier = Modifier.padding(bottom = 56.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Exercise")
@@ -119,10 +134,9 @@ fun CreateWorkoutContent(controller: NavController) {
     ) {
         LazyColumn {
             items(currentExercises) { exercise ->
-                Card(modifier = Modifier.padding(8.dp)) {
+                Card(modifier = Modifier.padding(8.dp)) { //.clickable { workoutViewModel.selectedExercise.value = exercise }
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(exercise.name, style = MaterialTheme.typography.h6)
-
                         val sets = exerciseSets.filter { it.attemptId == exercise.id }
                         if (sets.isEmpty()) {
                             workoutViewModel.addSetToAttempt(exercise.id)
@@ -133,20 +147,21 @@ fun CreateWorkoutContent(controller: NavController) {
                                     workoutViewModel.onSetDetailsUpdated(exercise.id)
                                 }, workoutViewModel = workoutViewModel, exercise = exercise)
                             }
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
+
 
 @Composable
 fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, workoutViewModel: WorkoutViewModel, exercise: Exercise) {
     var weight by remember { mutableStateOf(setDetails.weight.toString()) }
     var reps by remember { mutableStateOf(setDetails.reps) }
     var isNewSetAdded by remember { mutableStateOf(false) }
-    var previousReps by remember { mutableStateOf(0) } // Add this line
+    var previousReps by remember { mutableStateOf(0) }
 
     Column {
         Row(modifier = Modifier.padding(8.dp)) {
@@ -170,7 +185,10 @@ fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, wo
                     onSetChanged(weight.toDoubleOrNull() ?: 0.0, newReps)
 
                     if (previousReps == 0 && newReps in 1..9 && !isNewSetAdded) {
-                        workoutViewModel.addSetToAttempt(exercise.id)
+// I have no idea why program is breaking but yeah gl fixing <3
+//                        CoroutineScope(Dispatchers.IO).launch {
+//                            workoutViewModel.insertNewSet(exercise.id, weight.toDoubleOrNull() ?: 0.0, newReps)
+//                        }
                         isNewSetAdded = true
                     }
                     previousReps = newReps
@@ -180,6 +198,7 @@ fun SetInputRow(setDetails: ExerciseSet, onSetChanged: (Double, Int) -> Unit, wo
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f)
             )
+
         }
     }
 }

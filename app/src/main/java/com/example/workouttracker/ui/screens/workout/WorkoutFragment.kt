@@ -23,6 +23,9 @@ import com.example.workouttracker.ui.screens.workout.WorkoutViewModel
 
 
 import com.example.workouttracker.ui.theme.WorkoutTrackerTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun WorkoutScreen(controller: NavController) {
@@ -50,6 +53,10 @@ fun WorkoutContent(controller: NavController) {
     ) {
         Button(
             onClick = {
+// for some reason program just breaks so gl fixing <3
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val workoutID = workoutViewModel.insertWorkout()
+//                }
                 controller.navigate("workout/create")
                 workoutViewModel.startWorkout()
             }
